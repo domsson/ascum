@@ -1,14 +1,18 @@
 #include <stdio.h>      // NULL, fprintf(), stdout 
 #include <stdlib.h>     // NULL, EXIT_FAILURE, EXIT_SUCCESS
-#include <unistd.h>     // getopt(), sleep()
+#include <unistd.h>     // getopt(), fstat()
+#include <sys/types.h>  // fstat()
+#include <sys/stat.h>   // fstat()
+#include <ctype.h>      // isprint()
 
 typedef unsigned char byte;
 
 struct options
 {
 	byte  help : 1;        // Print help and exit
-	int   factor;
-	char* string;
+	int   printable;       // count only printable characters
+	int   factor;          // add this factor to every char value
+	char *string;          // the string to process
 };
 
 typedef struct options opts_s;
@@ -17,13 +21,13 @@ typedef struct options opts_s;
  * Prints usage information.
  */
 static void
-help(char *invocation)
+help(char *invocation, FILE *stream)
 {
-	fprintf(stdout, "Usage:\n");
-	fprintf(stdout, "\t%s [OPTIONS...] server_ip\n", invocation);
-	fprintf(stdout, "\n");
-	fprintf(stdout, "Options:\n");
-	fprintf(stdout, "\t-h\tPrint this help text and exit.\n");
+	fprintf(stream, "Usage:\n");
+	fprintf(stream, "\t%s [OPTIONS...] [input]\n", invocation);
+	fprintf(stream, "\n");
+	fprintf(stream, "Options:\n");
+	fprintf(stream, "\t-h\tPrint this help text and exit.\n");
 }
 
 static void
@@ -32,15 +36,18 @@ fetch_opts(opts_s *opts, int argc, char **argv)
 	// Process command line options
 	opterr = 0;
 	int o;
-	while ((o = getopt(argc, argv, "f:h")) != -1)
+	while ((o = getopt(argc, argv, "f:hp")) != -1)
 	{
 		switch(o)
 		{
+			case 'f':
+				opts->factor = atoi(optarg);
+				break;
 			case 'h':
 				opts->help = 1;
 				break;
-			case 'f':
-				opts->factor = atoi(optarg);
+			case 'p':
+				opts->printable = 1;
 				break;
 		}
 	}
@@ -49,6 +56,42 @@ fetch_opts(opts_s *opts, int argc, char **argv)
 	{
 		opts->string = argv[optind];
 	}
+}
+
+size_t sum_string(char *str, int printable, int factor)
+{
+	size_t sum = 0;
+	int add = 0;
+	for (; *str; str++)
+	{
+		add = (!printable || isprint(*str)) * (*str + factor);
+		sum += add > 0 ? add : 0;
+	}
+	return sum;
+}
+
+size_t sum_stream(FILE *stream, int printable, int factor)
+{
+	size_t sum = 0;
+	int add = 0;
+	char c = 0;
+	while ((c = fgetc(stream)) != EOF)
+	{
+		add = (!printable || isprint(c)) * (c + factor);
+		sum += add > 0 ? add : 0;
+	}
+	return sum;
+}
+
+int
+is_pipe(int fd)
+{
+	struct stat st_info;
+	if (fstat(fd, &st_info) != 0)
+	{
+		return 0;
+	}
+	return (S_ISFIFO(st_info.st_mode));
 }
 
 /*
@@ -64,24 +107,25 @@ main(int argc, char **argv)
 	// print help and exit
 	if (opts.help)
 	{
-		help(argv[0]);
+		help(argv[0], stdout);
 		return EXIT_SUCCESS;
 	}
 
-	if (opts.string == NULL)
+	size_t sum = 0;
+
+	// input via command line arg
+	if (opts.string)
 	{
-		return EXIT_SUCCESS;
+		sum = sum_string(opts.string, opts.printable, opts.factor);
 	}
 
-	int sum = 0;
-	for (; *opts.string; opts.string++)
+	// input via stdin pipe
+	else if (is_pipe(STDIN_FILENO))
 	{
-		sum += *opts.string + opts.factor;
+		sum = sum_stream(stdin, opts.printable, opts.factor);
 	}
-
-	fprintf(stdout, "%d\n", sum);
 	
-	// done, bye
+	fprintf(stdout, "%zu\n", sum);
 	return EXIT_SUCCESS;
 }
 
