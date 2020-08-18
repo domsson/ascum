@@ -19,6 +19,9 @@ Examples:
     echo "hello world" | ascum
     1126
 
+    echo -n "hello world" | ascum
+    1116
+
     echo "hello world" | ascum -p
     1116
 
