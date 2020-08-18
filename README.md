@@ -3,6 +3,8 @@
 **ASC**II s**um**
 
 Sums up the ASCII values of all characters in the given string and prints the result to `stdout`.
+
+Note: `ascum` is not UTF-8 aware; it treats a string as series of bytes and adds up the decimal values of each byte.
  
 ## Usage
 
