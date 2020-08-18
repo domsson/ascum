@@ -1,6 +1,6 @@
 # ascum
 
-*ASC*II s*um*
+**ASC**II s**um**
 
 Sums up the ASCII values of all characters in the given string and prints the result to `stdout`. Optionally, a factor can be given via `-f`, which will be added to each character's ASCII value before adding it to the result. If the `-p` option is given, only printable characters will be summed up.
 
