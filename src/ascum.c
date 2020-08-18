@@ -28,7 +28,7 @@ help(char *invocation, FILE *stream)
 	fprintf(stream, "\t%s [OPTIONS...] [INPUT]\n", invocation);
 	fprintf(stream, "\n");
 	fprintf(stream, "Options:\n");
-	fprintf(stream, "\t-f INT\tAdd this number to ever character's ASCII value.\n");
+	fprintf(stream, "\t-f INT\tAdd this number to every character's ASCII value.\n");
 	fprintf(stream, "\t-h\tPrint this help text and exit.\n");
 	fprintf(stream, "\t-n\tDo not print a trailing newline.\n");
 	fprintf(stream, "\t-p\tOnly sum up ASCII values for printable characters.\n");

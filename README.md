@@ -10,9 +10,16 @@ By default, `ascum` adds a trailing newline to the result. This can be prevented
 
 ## Usage
 
-    ascum [-f] [-h] [-n] [-p] [INPUT]
+    ascum [-f INT] [-h] [-n] [-p] [INPUT]
 
-Examples:
+Options:
+
+ - `-f INT` Add this number to every character's ASCII value
+ - `-h` Print this help text and exit
+ - `-n` Do not print a trailing newline character
+ - `-p` Only sum up ASCII values for printable characters
+
+## Example usages
 
     ascum "hello world"
     1116
