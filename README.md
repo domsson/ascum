@@ -8,3 +8,11 @@ Sums up the ASCII values of all characters in the given string and prints the re
 
     ascum [-f] 'string to sum'
 
+Examples:
+
+    ascum 'hello world'
+    1116
+
+    ascum -f-64 'hello world'
+    412
+
