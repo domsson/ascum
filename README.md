@@ -29,7 +29,7 @@ Options:
     echo "hello world" | ascum -p
     1116
 
-    ascum -f-64 "hello world"
-    412
+    ascum -f-96 "hello world"
+    124
 
 
