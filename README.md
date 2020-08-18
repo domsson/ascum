@@ -6,10 +6,11 @@ Sums up the ASCII values of all characters in the given string and prints the re
 
 The input string can be provided as command line argument or by piping it into `ascum`. Note, however, that there might be an additional line break character if piping is used; the `-p` option can help if counting such character values is not desired.
 
+By default, `ascum` adds a trailing newline to the result. This can be prevented by using the `-n` option.
 
 ## Usage
 
-    ascum [-f] [-h] [-p] [INPUT]
+    ascum [-f] [-h] [-n] [-p] [INPUT]
 
 Examples:
 

@@ -10,7 +10,8 @@ typedef unsigned char byte;
 struct options
 {
 	byte  help : 1;        // Print help and exit
-	int   printable;       // count only printable characters
+	byte  printable : 1;   // count only printable characters
+	byte  nonl : 1;        // do not output a trailing newline
 	int   factor;          // add this factor to every char value
 	char *string;          // the string to process
 };
@@ -29,6 +30,7 @@ help(char *invocation, FILE *stream)
 	fprintf(stream, "Options:\n");
 	fprintf(stream, "\t-f INT\tAdd this number to ever character's ASCII value.\n");
 	fprintf(stream, "\t-h\tPrint this help text and exit.\n");
+	fprintf(stream, "\t-n\tDo not print a trailing newline.\n");
 	fprintf(stream, "\t-p\tOnly sum up ASCII values for printable characters.\n");
 }
 
@@ -38,7 +40,7 @@ fetch_opts(opts_s *opts, int argc, char **argv)
 	// Process command line options
 	opterr = 0;
 	int o;
-	while ((o = getopt(argc, argv, "f:hp")) != -1)
+	while ((o = getopt(argc, argv, "f:hnp")) != -1)
 	{
 		switch(o)
 		{
@@ -47,6 +49,9 @@ fetch_opts(opts_s *opts, int argc, char **argv)
 				break;
 			case 'h':
 				opts->help = 1;
+				break;
+			case 'n':
+				opts->nonl = 1;
 				break;
 			case 'p':
 				opts->printable = 1;
@@ -127,7 +132,7 @@ main(int argc, char **argv)
 		sum = sum_stream(stdin, opts.printable, opts.factor);
 	}
 	
-	fprintf(stdout, "%zu\n", sum);
+	fprintf(stdout, "%zu%c", sum, opts.nonl ? '\0' : '\n');
 	return EXIT_SUCCESS;
 }
 
