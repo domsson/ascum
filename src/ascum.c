@@ -24,10 +24,12 @@ static void
 help(char *invocation, FILE *stream)
 {
 	fprintf(stream, "Usage:\n");
-	fprintf(stream, "\t%s [OPTIONS...] [input]\n", invocation);
+	fprintf(stream, "\t%s [OPTIONS...] [INPUT]\n", invocation);
 	fprintf(stream, "\n");
 	fprintf(stream, "Options:\n");
+	fprintf(stream, "\t-f INT\tAdd this number to ever character's ASCII value.\n");
 	fprintf(stream, "\t-h\tPrint this help text and exit.\n");
+	fprintf(stream, "\t-p\tOnly sum up ASCII values for printable characters.\n");
 }
 
 static void
